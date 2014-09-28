@@ -63,32 +63,9 @@ class Battle(object):
 					elif cmd.lower() == "super":
 						player.super(evil)
 					elif cmd.lower() == "grenade" and hasGrenade:
-						for item in player.inventory:
-							if item.name == "Grenade":
-								item.count -= 1
-								print "{0} tosses a grenade at the enemies.".format(player.name)
-								if item.count <= 0:
-									player.inventory.remove(item)
-								break
-						for enemy in evil:
-							if enemy.health > 0:
-								enemy.health -= 1
-					else:
-						for friend in good:
-							if cmd.lower() == "medkit {0}".format(friend.name.lower()) and friend.health > 0:
-								if friend == player:
-									print "{0} uses a medkit to heal themself"
-								else:
-									print "{0} uses a medkit to heal {1}".format(player.name, friend.name)
-								friend.health += 3
-								friend.health = min(10, friend.health)
-								for item in player.inventory:
-									if item.name == "Medkit":
-										item.count -= 1
-										if item.count <= 0:
-											player.inventory.remove(item)
-										break
-								break
+						player.grenade(evil)
+					elif "medkit" in cmd.lower():
+						player.medkit(cmd, good)
 
 
 			for number, enemy in enumerate(evil, start = 1):
