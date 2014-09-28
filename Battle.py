@@ -40,26 +40,14 @@ class Battle(object):
 					cmd = raw_input(">> ")
 					for number, enemy in enumerate(evil, start = 1):
 						if cmd.lower() == "attack enemy {0}".format(number) and enemy.health > 0:
-							hit_chance = random.randint(1, 100)
-							if hit_chance >= 50:
-								print "Hit!"
-								enemy.health -= 1
-							else:
-								print "Miss!" 
+							player.attack(enemy)
 						elif cmd.lower() == "attack enemy {0}".format(number):
-							print "The confusion of battle causes you to miss an alive target!"
-
+							player.miss
 					if cmd.lower() == "defend":
-						print "{0} shouts at the enemy, taunting them!".format(player.name)
-						player.defend = True
+						player.defend
 					elif cmd.lower() == "super":
-						print "{0} SOMETHING COOL ABOUT USING A SUPER".format(player.name)
-						player.use_super = True
-						if player.cooldown <= 0:
-							for enemy in evil:
-								enemy.health -= 1
-						else:
-							print "{0}, you can't use your super yet".format(player.name)
+						player.super(evil)
+
 
 
 
@@ -102,3 +90,4 @@ class Battle(object):
 			# check if enemies are still alive
 			if not self.combat_check(evil) or not self.combat_check(good):
 				break
+
