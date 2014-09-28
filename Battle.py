@@ -1,5 +1,6 @@
 import random
 import code
+from Item import Item
 
 class Battle(object):
 
@@ -15,6 +16,9 @@ class Battle(object):
 		in_combat = True
 		while in_combat:
 			for player in good:
+				hasMedkit = False
+				hasGrenade = False
+				
 				if not self.combat_check(evil):
 					break
 				if player.health > 0:
@@ -33,8 +37,19 @@ class Battle(object):
 					for number, enemy in enumerate(evil, start = 1):
 						if enemy.health > 0:
 							choices += "attack enemy {0}, ".format(number)
-					choices += "'defend', 'super':"
+					choices += "'defend', 'super'" 
 
+					itemChoices = ""
+					for item in player.inventory:
+						if item.name == "Medkit":
+							itemChoices += ", 'medkit <name>'"
+							hasMedkit = True
+
+						if item.name == "Grenade":
+							itemChoices += ", 'grenade'"
+							hasGrenade = True
+
+					choices += itemChoices + ":"
 					print choices
 
 					cmd = raw_input(">> ")
@@ -60,9 +75,33 @@ class Battle(object):
 								enemy.health -= 1
 						else:
 							print "{0}, you can't use your super yet".format(player.name)
-
-
-
+					elif cmd.lower() == "grenade" and hasGrenade:
+						for item in player.inventory:
+							if item.name == "Grenade":
+								item.count -= 1
+								print "{0} tosses a grenade at the enemies.".format(player.name)
+								if item.count <= 0:
+									player.inventory.remove(item)
+								break
+						for enemy in evil:
+							if enemy.health > 0:
+								enemy.health -= 1
+					else:
+						for friend in good:
+							if cmd.lower() == "medkit {0}".format(friend.name.lower()) and friend.health > 0:
+								if friend == player:
+									print "{0} uses a medkit to heal themself"
+								else:
+									print "{0} uses a medkit to heal {1}".format(player.name, friend.name)
+								friend.health += 3
+								friend.health = min(10, friend.health)
+								for item in player.inventory:
+									if item.name == "Medkit":
+										item.count -= 1
+										if item.count <= 0:
+											player.inventory.remove(item)
+										break
+								break
 
 			for number, enemy in enumerate(evil, start = 1):
 				if not self.combat_check(good):
