@@ -49,6 +49,35 @@ class Player(object):
 		else:
 			print "{0}, your super fizzles and makes you look stupid.".format(self.name)
 
+	def grenade(self, evil):
+		for item in self.inventory:
+			if item.name == "Grenade":
+				item.count -= 1
+				print "{0} tosses a grenade at the enemies.".format(self.name)
+				if item.count <= 0:
+					self.inventory.remove(item)
+				break
+		for enemy in evil:
+			if enemy.health > 0:
+				enemy.health -= 1
+
+	def medkit(self, cmd, good):
+		for friend in good:
+			if cmd.lower() == "medkit {0}".format(friend.name.lower()) and friend.health > 0:
+				if friend == self:
+					print "{0} uses a medkit to heal themself"
+				else:
+					print "{0} uses a medkit to heal {1}".format(self.name, friend.name)
+				friend.health += 3
+				friend.health = min(10, friend.health)
+				for item in self.inventory:
+					if item.name == "Medkit":
+						item.count -= 1
+						if item.count <= 0:
+							self.inventory.remove(item)
+						break
+				break
+
 	def defend(self):
 		print "{0} shouts at the enemy, taunting them!".format(self.name)
 		self.defend = True
