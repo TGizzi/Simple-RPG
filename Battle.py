@@ -40,19 +40,13 @@ class Battle(object):
 					choices += "'defend', 'super'" 
 
 					itemChoices = ""
-					possibleChoices = ["Medkit", "Grenade"]
 					for item in player.inventory:
-						if possibleChoices.count == 0:
-							break
-
 						if item.name == "Medkit":
 							itemChoices += ", 'medkit <name>'"
-							possibleChoices.remove("Medkit")
 							hasMedkit = True
 
 						if item.name == "Grenade":
 							itemChoices += ", 'grenade'"
-							possibleChoices.remove("Grenade")
 							hasGrenade = True
 
 					choices += itemChoices + ":"
@@ -82,14 +76,16 @@ class Battle(object):
 						else:
 							print "{0}, you can't use your super yet".format(player.name)
 					elif cmd.lower() == "grenade" and hasGrenade:
-						print "{0} tosses a grenade at the enemies".format(player.name)
+						for item in player.inventory:
+							if item.name == "Grenade":
+								item.count -= 1
+								print "{0} tosses a grenade at the enemies.".format(player.name)
+								if item.count <= 0:
+									player.inventory.remove(item)
+								break
 						for enemy in evil:
 							if enemy.health > 0:
 								enemy.health -= 1
-							for item in player.inventory:
-								if item.name == "Grenade":
-									player.inventory.remove(item)
-									break
 					else:
 						for friend in good:
 							if cmd.lower() == "medkit {0}".format(friend.name.lower()) and friend.health > 0:
@@ -101,7 +97,9 @@ class Battle(object):
 								friend.health = min(10, friend.health)
 								for item in player.inventory:
 									if item.name == "Medkit":
-										player.inventory.remove(item)
+										item.count -= 1
+										if item.count <= 0:
+											player.inventory.remove(item)
 										break
 								break
 

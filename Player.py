@@ -6,7 +6,7 @@ class Player(object):
 	def __init__(self, name):
 		self.name      = name
 		self.health    = 10
-		self.inventory = [ItemList.Medkit, ItemList.Grenade]
+		self.inventory = [ItemList.Medkit(), ItemList.Grenade(2)]
 		self.to_hit    = 50
 		self.be_hit    = 25 
 		self.defend    = False
